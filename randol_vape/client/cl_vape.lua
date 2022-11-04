@@ -9,10 +9,10 @@ AddEventHandler('onResourceStart', function(resourceName)
 end)
 
 AddEventHandler('onResourceStop', function(resourceName) 
-	if GetCurrentResourceName() == resourceName then
-           exports['qb-target']:RemoveZone("vapeStuff")
-	   isVaping = false
-	end 
+    if GetCurrentResourceName() == resourceName then
+	exports['qb-target']:RemoveZone("vapeStuff")
+	isVaping = false
+    end 
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
