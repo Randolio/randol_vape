@@ -40,9 +40,6 @@
     ["combinable"] = nil,
     ["description"] = "A juiceless vape."
 },
-
-}
-
 ```
 ## Add this emote to your dpemotes.
 ```
