@@ -10,8 +10,8 @@ end)
 
 AddEventHandler('onResourceStop', function(resourceName) 
 	if GetCurrentResourceName() == resourceName then
-        exports['qb-target']:RemoveZone("vapeStuff")
-		isVaping = false
+           exports['qb-target']:RemoveZone("vapeStuff")
+	   isVaping = false
 	end 
 end)
 
@@ -22,7 +22,7 @@ end)
 RegisterNetEvent('QBCore:Client:OnPlayerUnload')
 AddEventHandler('QBCore:Client:OnPlayerUnload', function()
     exports['qb-target']:RemoveZone("vapeStuff")
-	isVaping = false
+    isVaping = false
 end)
 
 function VapeCraft()
