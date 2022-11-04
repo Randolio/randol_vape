@@ -1,6 +1,6 @@
 # Randolio Vape Script for QBCore Framework.
 
-```
+
 ## Add to your qb-core/shared/items.lua
 
 ```
