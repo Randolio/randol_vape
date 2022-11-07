@@ -136,6 +136,8 @@ RegisterNetEvent("randol_vape:client:syncSmoke", function(netPed, pos)
 		SetParticleFxLoopedAlpha(vapeClouds, 1.0) -- Not sure if this actually makes it more visible?
 		SetTimeout(5000, function()
 			StopParticleFxLooped(vapeClouds, 0)
+			RemoveParticleFxFromEntity(pedNet)
+			RemoveParticleFx("exp_grd_bzgas_smoke", true)
 		end)
 	end
 end)
