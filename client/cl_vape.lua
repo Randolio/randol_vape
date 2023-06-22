@@ -34,9 +34,10 @@ function VapeCraft()
 		drawSprite = true,
 		options = {
 			{
-				type = "client",
 				icon = "fa-solid fa-screwdriver",
-				event = "randol_vape:client:OpenCraft",
+				onSelect = function()
+					TriggerEvent("randol_vape:client:OpenCraft")
+				end,
 				label = "Craft Station",
 				distance = 1.5
 			},
@@ -71,6 +72,7 @@ RegisterNetEvent('randol_vape:client:OpenCraft', function()
 			}
 		}
     })
+	lib.showContext('randol_craft_vape')
 end)
 
 RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
@@ -80,6 +82,7 @@ RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
 	if not deadBozo then
 		if not isVaping then
 			isVaping = true
+			LocalPlayer.state.invBusy = true
 			TriggerEvent('animations:client:EmoteCommandStart', {"hitvape"})
 			TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 10.0, "vaping", 0.3)
 			if lib.progressCircle({
@@ -99,6 +102,7 @@ RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
 				TriggerServerEvent('hud:server:RelieveStress', math.random(6, 8))
 				dragsLeft = ItemData.metadata.vapeuses
 				dragsLeftData = ItemData
+				LocalPlayer.state.invBusy = false
 				TriggerServerEvent('randol_vape:server:updateVape', dragsLeft)
 				isVaping = false
 			end
@@ -137,6 +141,7 @@ RegisterNetEvent('randol_vape:client:craftVape', function()
 	if materials and materials.iron >= 2 then
 		if materials and materials.glass >= 2 then
 			if materials and materials.electronickit >= 1 then
+				LocalPlayer.state.invBusy = true
 				TriggerEvent('animations:client:EmoteCommandStart', {"mechanic4"})
 				if lib.progressCircle({
 					duration = 5000,
@@ -149,6 +154,7 @@ RegisterNetEvent('randol_vape:client:craftVape', function()
 						combat = true,
 					}
 				}) then
+					LocalPlayer.state.invBusy = false
 					TriggerServerEvent('randol_vape:server:makeVape')
 				end
 			else
@@ -176,6 +182,7 @@ RegisterNetEvent('randol_vape:client:refillVape', function()
 	local gotStuff = exports.ox_inventory:Search('count', {'emptyvape', 'vapejuice'})
 	if gotStuff and gotStuff.emptyvape >= 1 then
 		if gotStuff and gotStuff.vapejuice >= 1 then
+			LocalPlayer.state.invBusy = true
 			TriggerEvent('animations:client:EmoteCommandStart', {"mechanic4"})
 			if lib.progressCircle({
 				duration = 5000,
@@ -188,6 +195,7 @@ RegisterNetEvent('randol_vape:client:refillVape', function()
 					combat = true
 				}
 			}) then
+				LocalPlayer.state.invBusy = false
 				TriggerServerEvent('randol_vape:server:fillVape')
 			end
 		else
