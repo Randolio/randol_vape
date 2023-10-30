@@ -1,11 +1,9 @@
-local QBCore = exports['qb-core']:GetCoreObject() -- Core
 local PlayerData = QBCore.Functions.GetPlayerData() or {}
 local isVaping = false
 local dragsLeft = 0
 
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
-
     VapeCraft()
 end)
 
@@ -23,12 +21,13 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
 	PlayerData = {}
-    exports.ox_target:removeZone() -- Needs to return id number
+    exports.ox_target:removeZone('randol_vapeTarget') -- Needs to return id number
     isVaping = false
 end)
 
 function VapeCraft()
 	exports.ox_target:addSphereZone({
+		name = 'randol_vapeTarget',
 		coords = vector3(-1167.97, -1573.82, 4.26),
 		radius = 0.65,
 		drawSprite = true,
@@ -75,7 +74,7 @@ RegisterNetEvent('randol_vape:client:OpenCraft', function()
 	lib.showContext('randol_craft_vape')
 end)
 
-RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
+RegisterNetEvent("randol_vape:client:useVape", function(ItemData, updateData)
 	local pos = GetEntityCoords(cache.ped)
 	local pedNet = PedToNet(cache.ped)
 	local deadBozo = PlayerData.metadata.isdead
@@ -83,7 +82,6 @@ RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
 		if not isVaping then
 			isVaping = true
 			LocalPlayer.state.invBusy = true
-			TriggerEvent('animations:client:EmoteCommandStart', {"hitvape"})
 			TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 10.0, "vaping", 0.3)
 			if lib.progressCircle({
 				duration = 5000,
@@ -91,32 +89,24 @@ RegisterNetEvent("randol_vape:client:useVape", function(ItemData)
 				position = 'bottom',
 				useWhileDead = false,
 				canCancel = false,
-				disable = {
-					combat = true,
-				}
+				disable = { combat = true },
+				anim = { dict = "mp_player_inteat@burger", clip = "mp_player_int_eat_burger", flag = 49 }
 			}) then
-				TriggerEvent('animations:client:EmoteCommandStart', {"hitvape"})
-				Wait(250) -- My hacky way of removing the prop that gets stuck if you go into first person and come back out.
-				TriggerEvent('animations:client:EmoteCommandStart', {"c"})
 				TriggerServerEvent("randol_vape:server:syncSmoke", pedNet, pos)
 				TriggerServerEvent('hud:server:RelieveStress', math.random(6, 8))
-				dragsLeft = ItemData.metadata.vapeuses
-				dragsLeftData = ItemData
 				LocalPlayer.state.invBusy = false
-				TriggerServerEvent('randol_vape:server:updateVape', dragsLeft)
 				isVaping = false
 			end
+			if updateData then
+				dragsLeft = ItemData.metadata.vapeuses
+				dragsLeftData = ItemData
+				TriggerServerEvent('randol_vape:server:updateVape', dragsLeft)
+			end
 		else
-			lib.notify({
-				description = 'You already took a hit.',
-				type = 'error'
-			})
+			lib.notify({ description = 'You already took a hit.', type = 'error' })
 		end
 	else
-		lib.notify({
-			description = 'You\'re dead broski..',
-			type = 'error'
-		})
+		lib.notify({ description = 'You\'re dead broski..', type = 'error' })
 	end
 end)
 
@@ -149,31 +139,19 @@ RegisterNetEvent('randol_vape:client:craftVape', function()
 					position = 'bottom',
 					useWhileDead = false,
 					canCancel = false,
-					disable = {
-						move = true,
-						combat = true,
-					}
+					disable = { move = true, combat = true }
 				}) then
 					LocalPlayer.state.invBusy = false
 					TriggerServerEvent('randol_vape:server:makeVape')
 				end
 			else
-				lib.notify({
-					description = 'You need an electronic kit',
-					type = 'error'
-				})
+				lib.notify({ description = 'You need an electronic kit', type = 'error' })
 			end
 		else
-			lib.notify({
-				description = 'You don\'t have enough glass',
-				type = 'error'
-			})
+			lib.notify({ description = 'You don\'t have enough glass', type = 'error' })
 		end
 	else
-		lib.notify({
-			description = 'You don\'t have enough iron',
-			type = 'error'
-		})
+		lib.notify({ description = 'You don\'t have enough iron', type = 'error' })
 	end
 end)
 
@@ -190,24 +168,15 @@ RegisterNetEvent('randol_vape:client:refillVape', function()
 				position = 'bottom',
 				useWhileDead = false,
 				canCancel = false,
-				disable = {
-					move = true,
-					combat = true
-				}
+				disable = { move = true, combat = true }
 			}) then
 				LocalPlayer.state.invBusy = false
 				TriggerServerEvent('randol_vape:server:fillVape')
 			end
 		else
-			lib.notify({
-				description = "You don't have any Vape Juice to refill.",
-				type = "error"
-			})
+			lib.notify({ description = "You don't have any Vape Juice to refill.", type = "error" })
 		end
 	else
-		lib.notify({
-			description = "You need an empty vape.",
-			type = 'error'
-		})
+		lib.notify({ description = "You need an empty vape.", type = 'error' })
 	end
 end)

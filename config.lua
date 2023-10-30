@@ -13,3 +13,5 @@ Config.Juice = {
         },
     }
 }
+
+QBCore = exports['qb-core']:GetCoreObject()
